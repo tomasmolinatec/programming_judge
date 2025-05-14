@@ -34,6 +34,6 @@ export class UploadController {
 
     this.compilerService.Compile(file.filename, file.path);
 
-    return "Submission Accepted!\n"
+    return 'Submission Accepted!\n';
   }
 }

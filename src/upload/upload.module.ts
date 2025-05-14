@@ -13,7 +13,6 @@ import { CompilerModule } from 'src/compiler/compiler.module';
       storage: diskStorage({
         destination: './uploads', // folder to save to
         filename: (req, file, cb) => {
-          
           // generate a unique filename
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -23,7 +22,6 @@ import { CompilerModule } from 'src/compiler/compiler.module';
       }),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
       fileFilter: (req, file, cb) => {
-        
         const ext = extname(file.originalname).toLowerCase();
         // console.log('Uploaded file extension:', ext);
         if (ext !== '.cpp') {
