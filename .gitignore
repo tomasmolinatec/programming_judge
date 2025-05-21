@@ -2,8 +2,10 @@
 /dist
 /node_modules
 /build
+mongo_data/
+/mongo_data
 
-
+.vscode/
 # Logs
 logs
 *.log

@@ -6,6 +6,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CompilerModule } from 'src/compiler/compiler.module';
+import { ProblemsModule } from 'src/problems/problems.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CompilerModule } from 'src/compiler/compiler.module';
       },
     }),
     CompilerModule,
+    ProblemsModule,
   ],
   controllers: [UploadController],
   providers: [UploadService],

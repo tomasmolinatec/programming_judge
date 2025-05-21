@@ -3,11 +3,17 @@ import { UploadModule } from './upload/upload.module';
 import { CompilerModule } from './compiler/compiler.module';
 import { ExecuterModule } from './executer/executer.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ProblemsModule } from './problems/problems.module';
 
 @Module({
-  imports: [UploadModule, CompilerModule, ExecuterModule,
+  imports: [
+    UploadModule,
+    CompilerModule,
+    ExecuterModule,
     MongooseModule.forRoot('mongodb://admin:secret@localhost:27777', {
-  dbName: 'Judge',
+      dbName: 'Judge',
+    }),
+    ProblemsModule,
+  ],
 })
-]})
 export class AppModule {}

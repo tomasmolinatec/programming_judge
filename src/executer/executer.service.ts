@@ -1,25 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { exec } from 'child_process';
 import * as util from 'util';
 import * as path from 'path';
 import { InjectModel } from '@nestjs/mongoose';
 import { TestCase, TestCaseDocument } from './schemas/test_cases.schema';
 import { Model } from 'mongoose';
+import { SubmissionInterface } from 'src/utils/interfaces/submission.interface';
+import { ResponseInterface } from 'src/utils/interfaces/response.interface';
 
 const execAsync = util.promisify(exec);
 
 @Injectable()
 export class ExecuterService {
-    constructor(
-        @InjectModel(TestCase.name) private testCaseModel: Model<TestCaseDocument>,
-      ) {}
+  constructor(
+    @InjectModel(TestCase.name) private testCaseModel: Model<TestCaseDocument>,
+  ) {}
 
-  async ExecuteTests(filename: string): Promise<void> {
-    const tests = await this.testCaseModel.find().exec();
+  async ExecuteTests(submission: SubmissionInterface): Promise<ResponseInterface> {
+    const filename = submission.file.filename;
+    const id_problem = submission.id_problem;
+    const tests = await this.testCaseModel
+      .find({ id_problem: id_problem })
+      .exec();
 
+    // console.log(tests);
+    const res: ResponseInterface = {
+      status: 'Passed all tests!',
+      testcases: [],
+    };
+    let passedAll = true;
     for (let i = 0; i < tests.length; i++) {
-      const { input, expected_result } = tests[i];
+      const { input, expected_result, _id } = tests[i];
       const startTime = Date.now();
+
+     
+      if (!(_id && typeof _id === "object")) // TS NARROWING
+        throw new InternalServerErrorException("THIS")
+      const id = _id.toString();
 
       const result = await this.Execute(filename, input);
       const duration = Date.now() - startTime;
@@ -28,25 +45,38 @@ export class ExecuterService {
       const normalizedExpected = this.normalizeOutput(expected_result);
 
       if (normalizedResult === normalizedExpected) {
-        console.log(`Test ${i} passed in ${duration} ms`);
+        res.testcases!.push({
+          id: id,
+          status: 'Passed',
+          input: input,
+          expected: normalizedExpected,
+          output: normalizedResult,
+        });
       } else {
-        console.error(`Test ${i} failed in ${duration} ms
-Input:    "${input}"
-Expected: "${expected_result}"
-Got:      "${result.trim()}"`);
+        passedAll = false;
+        res.testcases!.push({
+          id: id,
+          status: 'Failed',
+          input: input,
+          expected: normalizedExpected,
+          output: normalizedResult,
+        });
       }
     }
+
+    if (!passedAll)
+    {
+      res.status = "Failed."
+    }
+
+    return res;
   }
 
   private normalizeOutput(output: string): string {
     return output.trim().replace(/\s+/g, ' ');
   }
 
-
-
-
   async Execute(filename: string, input: string): Promise<string> {
-   
     const command = `echo ${input} | ./executables/${filename}`;
 
     try {
@@ -60,57 +90,3 @@ Got:      "${result.trim()}"`);
 }
 
 
-
-
-// import { Injectable } from '@nestjs/common';
-
-// import { exec } from 'child_process';
-// import * as util from 'util';
-// const execAsync = util.promisify(exec);
-
-// @Injectable()
-// export class ExecuterService {
-
-
-// async ExecuteTests(filename: string)
-// {
-
-//     // CONSEGUIR DE MONGO
-//     const tests = [{input: "5 2", expected: "11"},
-//     {input: "5 2", expected: "11"},
-// ]
-
-//     for (let i = 0; i < tests.length; i++)
-//     {
-//         const startTime = Date.now();
-//         const result = await this.Execute(filename, tests[i].input)
-//         const finishTime = Date.now();
-
-//         if (result === tests[i].expected)
-//         {
-//             console.log(`Test ${i} completed succesfully in ${finishTime-startTime} ms!`)
-//         }
-//         else{
-//             console.log(`Test ${i} failed in ${finishTime-startTime} ms!`)
-//         }
-//     }
-
-//     }
-
-
-//   async Execute(filename:string, input : string) {
-
-//     const execCmd = `echo ${input} | ./executables/${filename}`;
-//     // console.log(execCmd);
-
-//     const { stdout: out, stderr: error } = await execAsync(execCmd);
-
-//     if (error) {
-//       console.log('Error: ', error);
-//     } else {
-//     //   console.log(out);
-//     }
-
-//     return out;
-//   }
-// }

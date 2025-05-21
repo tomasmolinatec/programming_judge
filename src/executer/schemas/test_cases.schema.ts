@@ -5,9 +5,8 @@ export type TestCaseDocument = TestCase & Document;
 
 @Schema()
 export class TestCase {
-
   @Prop({ required: true })
-  id_problem: number;
+  id_problem: string;
 
   @Prop({ required: true })
   input: string;

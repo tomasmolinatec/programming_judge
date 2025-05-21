@@ -6,6 +6,6 @@ import { ExecuterModule } from 'src/executer/executer.module';
 @Module({
   providers: [CompilerService],
   exports: [CompilerService],
-  imports: [ExecuterModule]
+  imports: [ExecuterModule],
 })
 export class CompilerModule {}

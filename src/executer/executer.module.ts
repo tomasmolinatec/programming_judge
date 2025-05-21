@@ -6,6 +6,10 @@ import { TestCase, TestCaseSchema } from './schemas/test_cases.schema';
 @Module({
   providers: [ExecuterService],
   exports: [ExecuterService],
-  imports:[MongooseModule.forFeature([{ name: TestCase.name, schema: TestCaseSchema }])]
+  imports: [
+    MongooseModule.forFeature([
+      { name: TestCase.name, schema: TestCaseSchema },
+    ]),
+  ],
 })
 export class ExecuterModule {}
