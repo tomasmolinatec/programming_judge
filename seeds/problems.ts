@@ -19,18 +19,26 @@ export const sampleProblems = [
   },
   {
     _id: '682cce895d264a122648434d',
-    title: 'Two Sum',
+    title: 'Fibonacci',
     difficulty: 'easy',
     description:
-      'Given an array of integers nums and an integer target, return the indices of the two numbers such that they add up to target.  Assume exactly one solution and you may not use the same element twice.',
+      'Given an number return the fibonacci sequence of that number.',
     inputSpec:
-      '• nums — space-separated integers (1 ≤ |nums| ≤ 10⁴)\n• target — single integer',
+      '• num — one positive integer',
     outputSpec:
-      'Two indices i and j (0-based, i < j) such that nums[i] + nums[j] = target.',
+      'One integer which represetnes the fibonacci sequence of the input',
     samples: [
       {
-        input: '2 7 11 15\n9',
-        output: '0 1',
+        input: '7',
+        output: '13',
+      },
+      {
+        input: '5',
+        output: '5',
+      },
+      {
+        input: '2',
+        output: '1',
       },
     ],
   },
